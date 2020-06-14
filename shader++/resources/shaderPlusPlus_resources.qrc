@@ -1,0 +1,15 @@
+<RCC>
+  <qresource prefix="/">
+    <file>icons/new.png</file>
+    <file>icons/open.png</file>
+    <file>icons/save.png</file>
+    <file>icons/save_as.png</file>
+    <file>icons/exit.png</file>
+    <file>icons/about.png</file>
+    <file>icons/icon.png</file>
+    <file>styles/default_style.xml</file>
+    <file>styles/drakula.xml</file>
+    <file>languages/glsl.xml</file>
+    <file>code_samples/shader.glsl</file>
+  </qresource>
+</RCC>
