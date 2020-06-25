@@ -3,3 +3,5 @@ cmake_minimum_required(VERSION 3.9)
 project ("Shader++")
 
 #excutable
+add_subdirectory(glew)
+add_subdirectory(shader++)
