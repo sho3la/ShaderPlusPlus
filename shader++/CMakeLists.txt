@@ -15,30 +15,31 @@ find_package(Qt5Gui     CONFIG REQUIRED)
 set(HEADER_FILES
 	include/MainWindow.h
 	include/Openglwidget.h
+	include/SyntaxStyle.h
 )
 
 # list the source files
 set(SOURCE_FILES
-    src/main.cpp
-    src/MainWindow.cpp
+	src/main.cpp
+	src/MainWindow.cpp
 	src/Openglwidget.cpp
+	src/SyntaxStyle.cpp
 )
 
 set(RESOURCES_FILE
-    resources/shaderPlusPlus_resources.qrc
+	resources/shaderPlusPlus_resources.qrc
 )
 
 add_executable(Shader++
-    
 	${HEADER_FILES}
 	${SOURCE_FILES}
 	${RESOURCES_FILE}
 )
 
 target_link_libraries(Shader++
-    Qt5::Core
-    Qt5::Widgets
-    Qt5::Gui
+	Qt5::Core
+	Qt5::Widgets
+	Qt5::Gui
 	opengl32
 	glew
 )
