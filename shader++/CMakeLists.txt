@@ -20,6 +20,7 @@ set(HEADER_FILES
 	include/Language.h
 	include/HighlightRule.h
 	include/HighlightBlockRule.h
+	include/GLSLHighlighter.h
 )
 
 # list the source files
@@ -29,6 +30,7 @@ set(SOURCE_FILES
 	src/Openglwidget.cpp
 	src/SyntaxStyle.cpp
 	src/Language.cpp
+	src/GLSLHighlighter.cpp
 )
 
 set(RESOURCES_FILE
