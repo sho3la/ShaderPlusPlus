@@ -16,6 +16,7 @@ set(HEADER_FILES
 	include/MainWindow.h
 	include/Openglwidget.h
 	include/SyntaxStyle.h
+	include/StyleSyntaxHighlighter.h
 )
 
 # list the source files
@@ -24,6 +25,7 @@ set(SOURCE_FILES
 	src/MainWindow.cpp
 	src/Openglwidget.cpp
 	src/SyntaxStyle.cpp
+	src/StyleSyntaxHighlighter.cpp
 )
 
 set(RESOURCES_FILE
