@@ -19,6 +19,7 @@ set(HEADER_FILES
 	include/StyleSyntaxHighlighter.h
 	include/Language.h
 	include/HighlightRule.h
+	include/HighlightBlockRule.h
 )
 
 # list the source files
