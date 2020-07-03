@@ -5,7 +5,6 @@
 #include <StyleSyntaxHighlighter.h>
 #include <HighlightRule.h>
 
-class SyntaxStyle;
 
 class GLSLHighlighter : public StyleSyntaxHighlighter
 {
@@ -14,7 +13,7 @@ class GLSLHighlighter : public StyleSyntaxHighlighter
 public:
 	GLSLHighlighter(QTextDocument* document = nullptr);
 
-	~GLSLHighlighter();
+	~GLSLHighlighter() {}
 
 protected:
 	void highlightBlock(const QString& text) override;
