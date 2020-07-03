@@ -22,6 +22,8 @@ set(HEADER_FILES
 	include/HighlightBlockRule.h
 	include/GLSLHighlighter.h
 	include/GLSLCompleter.h
+	include/LineNumberArea.h
+	include/CodeEditor.h
 )
 
 # list the source files
@@ -34,6 +36,8 @@ set(SOURCE_FILES
 	src/Language.cpp
 	src/GLSLHighlighter.cpp
 	src/GLSLCompleter.cpp
+	src/LineNumberArea.cpp
+	src/CodeEditor.cpp
 )
 
 set(RESOURCES_FILE
