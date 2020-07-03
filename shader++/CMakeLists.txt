@@ -62,4 +62,5 @@ target_link_libraries(Shader++
 target_include_directories(Shader++
 	PUBLIC
 	${CMAKE_CURRENT_SOURCE_DIR}/include
+	${CMAKE_SOURCE_DIR}/glew/include/GL
 )

@@ -1,13 +1,15 @@
 #include <QApplication>
 
-#include <Openglwidget.h>
+#include <MainWindow.h>
 
-int main(int argc, char* argv[])
+int main(int argc, char** argv)
 {
-	QApplication app(argc, argv);
+	// Creating application
+	QApplication a(argc, argv);
 
-	Openglwidget* w = new Openglwidget();
-	w->show();
+	// Creating main window
+	MainWindow w;
+	w.show();
 
-	return app.exec();
+	return QApplication::exec();
 }

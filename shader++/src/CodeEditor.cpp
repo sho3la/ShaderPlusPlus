@@ -3,8 +3,6 @@
 #include "CodeEditor.h"
 #include "StyleSyntaxHighlighter.h"
 
-
-// Qt
 #include <QTextBlock>
 #include <QPaintEvent>
 #include <QFontDatabase>
