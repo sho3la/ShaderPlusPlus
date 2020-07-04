@@ -13,6 +13,7 @@
 #include <QGroupBox>
 #include <QLabel>
 #include <QMenuBar>
+#include <QDockWidget>
 
 MainWindow::MainWindow(QWidget* parent) :
 	QMainWindow(parent),
@@ -26,6 +27,7 @@ MainWindow::MainWindow(QWidget* parent) :
 	initData();
 	initMenuBar();
 	createWidgets();
+	createDockWidgets();
 	setupWidgets();
 	performConnections();
 }
@@ -134,9 +136,21 @@ void MainWindow::createWidgets()
 	m_codeEditor = new CodeEditor(this);
 	hBox->addWidget(m_codeEditor);
 
+	// window maxmize by defautlt
+	setWindowState(Qt::WindowMaximized);
+}
 
-	m_renderArea = new Openglwidget(container);
-	hBox->addWidget(m_renderArea);
+void MainWindow::createDockWidgets()
+{
+	dock = new QDockWidget("Render",this);
+	dock->setFeatures(QDockWidget::DockWidgetClosable |
+		QDockWidget::DockWidgetFloatable |
+		QDockWidget::DockWidgetMovable);
+
+	m_renderArea = new Openglwidget(dock);
+
+	dock->setWidget(m_renderArea);
+	addDockWidget(Qt::RightDockWidgetArea, dock);
 }
 
 void MainWindow::setupWidgets()
@@ -158,7 +172,14 @@ void MainWindow::textchanged()
 	m_renderArea->compile_shader();
 }
 
+void MainWindow::render_window_floating(bool topLevel)
+{
+	textchanged();
+	update();
+}
+
 void MainWindow::performConnections()
 {
 	connect(m_codeEditor, &CodeEditor::textChanged, this, &MainWindow::textchanged);
+	connect(dock, &QDockWidget::topLevelChanged, this, &MainWindow::render_window_floating);
 }

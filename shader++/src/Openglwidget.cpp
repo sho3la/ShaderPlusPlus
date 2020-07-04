@@ -4,7 +4,7 @@
 Openglwidget::Openglwidget(QWidget * parent)
 	: QOpenGLWidget(parent)
 {
-	setMinimumSize(800, 600);
+	setMinimumSize(800, 300);
 }
 
 Openglwidget::~Openglwidget()
@@ -74,12 +74,14 @@ void Openglwidget::initializeGL()
 void Openglwidget::paintGL()
 {
 	glClear(GL_COLOR_BUFFER_BIT);
-	glClearColor(0, 0, 0, 1);
+	glClearColor(0.5, 0.5, 0.5, 1);
 
 
 	glUseProgram(shaderProgram);
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+	update();
 }
 
 void Openglwidget::resizeGL(int width, int height)
@@ -153,6 +155,4 @@ void Openglwidget::compile_shader()
 	}
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
-
-	update();
 }

@@ -9,6 +9,7 @@ class QComboBox;
 class QCheckBox;
 class QSpinBox;
 class QCompleter;
+class QDockWidget;
 
 class SyntaxStyle;
 class StyleSyntaxHighlighter;
@@ -36,13 +37,19 @@ private:
 
 	void createWidgets();
 
+	void createDockWidgets();
+
 	void setupWidgets();
 
 	void textchanged();
 
+	void render_window_floating(bool topLevel);
+
 	void performConnections();
 
 	QVBoxLayout* m_setupLayout;
+
+	QDockWidget *dock;
 
 	CodeEditor* m_codeEditor;
 	Openglwidget* m_renderArea;
