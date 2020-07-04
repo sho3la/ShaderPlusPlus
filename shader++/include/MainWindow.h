@@ -49,7 +49,7 @@ private:
 
 	QVBoxLayout* m_setupLayout;
 
-	QDockWidget *dock;
+	QDockWidget *m_dockedWindow;
 
 	CodeEditor* m_codeEditor;
 	Openglwidget* m_renderArea;

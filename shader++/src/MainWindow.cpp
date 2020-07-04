@@ -142,15 +142,13 @@ void MainWindow::createWidgets()
 
 void MainWindow::createDockWidgets()
 {
-	dock = new QDockWidget("Render",this);
-	dock->setFeatures(QDockWidget::DockWidgetClosable |
-		QDockWidget::DockWidgetFloatable |
-		QDockWidget::DockWidgetMovable);
+	m_dockedWindow = new QDockWidget("Render",this);
+	m_dockedWindow->setFeatures(QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetMovable);
 
-	m_renderArea = new Openglwidget(dock);
+	m_renderArea = new Openglwidget(m_dockedWindow);
 
-	dock->setWidget(m_renderArea);
-	addDockWidget(Qt::RightDockWidgetArea, dock);
+	m_dockedWindow->setWidget(m_renderArea);
+	addDockWidget(Qt::RightDockWidgetArea, m_dockedWindow);
 }
 
 void MainWindow::setupWidgets()
@@ -181,5 +179,5 @@ void MainWindow::render_window_floating(bool topLevel)
 void MainWindow::performConnections()
 {
 	connect(m_codeEditor, &CodeEditor::textChanged, this, &MainWindow::textchanged);
-	connect(dock, &QDockWidget::topLevelChanged, this, &MainWindow::render_window_floating);
+	connect(m_dockedWindow, &QDockWidget::topLevelChanged, this, &MainWindow::render_window_floating);
 }
