@@ -10,6 +10,7 @@
     <file>styles/default_style.xml</file>
     <file>styles/drakula.xml</file>
     <file>languages/glsl.xml</file>
-    <file>code_samples/shader.glsl</file>
+    <file>code_samples/shader_00.glsl</file>
+    <file>code_samples/shader_01.glsl</file>
   </qresource>
 </RCC>

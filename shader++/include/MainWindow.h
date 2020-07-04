@@ -47,6 +47,8 @@ private:
 
 	void render_window_floating(bool topLevel);
 
+	void selected_example_changed(int index);
+
 	void performConnections();
 
 	QVBoxLayout* m_setupLayout;
@@ -73,4 +75,5 @@ private:
 	QAction* aboutAct;
 
 	QToolBar* toolbar;
+	QComboBox* m_examplesList;
 };

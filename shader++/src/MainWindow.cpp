@@ -15,6 +15,7 @@
 #include <QMenuBar>
 #include <QDockWidget>
 #include <QToolBar>
+#include <QComboBox>
 
 MainWindow::MainWindow(QWidget* parent) :
 	QMainWindow(parent),
@@ -41,7 +42,8 @@ MainWindow::~MainWindow()
 void MainWindow::initData()
 {
 	m_codeSamples = {
-		{"GLSL", loadCode(":/code_samples/shader.glsl")},
+		{"sample 1", loadCode(":/code_samples/shader_00.glsl")},
+		{"sample 2", loadCode(":/code_samples/shader_01.glsl")}
 	};
 
 	m_completers = {
@@ -102,6 +104,17 @@ void MainWindow::initToolBar()
 	toolbar->addAction(saveAct);
 	toolbar->addAction(saveasAct);
 
+	toolbar->addSeparator();
+
+	toolbar->addWidget(new QLabel("   Examples  "));
+
+	m_examplesList = new QComboBox();
+	m_examplesList->setMinimumWidth(150);
+
+	for(auto el : m_codeSamples)
+		m_examplesList->addItem(el.first);
+
+	toolbar->addWidget(m_examplesList);
 	addToolBar(toolbar);
 }
 
@@ -189,8 +202,16 @@ void MainWindow::render_window_floating(bool topLevel)
 	update();
 }
 
+void MainWindow::selected_example_changed(int index)
+{
+	m_codeEditor->setPlainText(m_codeSamples[index].second);
+	textchanged();
+	update();
+}
+
 void MainWindow::performConnections()
 {
 	connect(m_codeEditor, &CodeEditor::textChanged, this, &MainWindow::textchanged);
 	connect(m_dockedWindow, &QDockWidget::topLevelChanged, this, &MainWindow::render_window_floating);
+	connect(m_examplesList, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &MainWindow::selected_example_changed);
 }
