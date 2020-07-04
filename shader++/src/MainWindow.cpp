@@ -16,6 +16,7 @@
 #include <QDockWidget>
 #include <QToolBar>
 #include <QComboBox>
+#include <QListWidget>
 
 MainWindow::MainWindow(QWidget* parent) :
 	QMainWindow(parent),
@@ -168,13 +169,20 @@ void MainWindow::createWidgets()
 
 void MainWindow::createDockWidgets()
 {
-	m_dockedWindow = new QDockWidget("Render",this);
-	m_dockedWindow->setFeatures(QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetMovable);
+	m_dockedRenderWindow = new QDockWidget("Render",this);
+	m_dockedRenderWindow->setFeatures(QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetMovable);
 
-	m_renderArea = new Openglwidget(m_dockedWindow);
+	m_renderArea = new Openglwidget(m_dockedRenderWindow);
 
-	m_dockedWindow->setWidget(m_renderArea);
-	addDockWidget(Qt::RightDockWidgetArea, m_dockedWindow);
+	m_dockedRenderWindow->setWidget(m_renderArea);
+	addDockWidget(Qt::RightDockWidgetArea, m_dockedRenderWindow);
+
+
+	m_dockedErrorWindow = new QDockWidget("Errors", this);
+	m_dockedErrorWindow->setFeatures(QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetMovable);
+	m_errorsList = new QListWidget();
+	m_dockedErrorWindow->setWidget(m_errorsList);
+	addDockWidget(Qt::RightDockWidgetArea, m_dockedErrorWindow);
 }
 
 void MainWindow::setupWidgets()
@@ -191,9 +199,17 @@ void MainWindow::setupWidgets()
 
 void MainWindow::textchanged()
 {
-	auto nn = m_codeEditor->toPlainText().toStdString();
-	m_renderArea->ps_shader = nn.c_str();
-	m_renderArea->compile_shader();
+	auto code = m_codeEditor->toPlainText().toStdString();
+	m_renderArea->ps_shader = code.c_str();
+	auto result = m_renderArea->compile_shader();
+
+	if (result.size() > 0)
+	{
+		m_errorsList->clear();
+		for (auto error : result)
+			m_errorsList->addItem(error);
+	}
+	else m_errorsList->clear();
 }
 
 void MainWindow::render_window_floating(bool topLevel)
@@ -212,6 +228,6 @@ void MainWindow::selected_example_changed(int index)
 void MainWindow::performConnections()
 {
 	connect(m_codeEditor, &CodeEditor::textChanged, this, &MainWindow::textchanged);
-	connect(m_dockedWindow, &QDockWidget::topLevelChanged, this, &MainWindow::render_window_floating);
+	connect(m_dockedRenderWindow, &QDockWidget::topLevelChanged, this, &MainWindow::render_window_floating);
 	connect(m_examplesList, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &MainWindow::selected_example_changed);
 }

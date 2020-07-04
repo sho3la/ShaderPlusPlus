@@ -10,6 +10,7 @@ class QCheckBox;
 class QSpinBox;
 class QCompleter;
 class QDockWidget;
+class QListWidget;
 
 class SyntaxStyle;
 class StyleSyntaxHighlighter;
@@ -53,7 +54,8 @@ private:
 
 	QVBoxLayout* m_setupLayout;
 
-	QDockWidget *m_dockedWindow;
+	QDockWidget *m_dockedRenderWindow;
+	QDockWidget *m_dockedErrorWindow;
 
 	CodeEditor* m_codeEditor;
 	Openglwidget* m_renderArea;
@@ -76,4 +78,5 @@ private:
 
 	QToolBar* toolbar;
 	QComboBox* m_examplesList;
+	QListWidget* m_errorsList;
 };

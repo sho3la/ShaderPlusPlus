@@ -112,13 +112,14 @@ void Openglwidget::keyReleaseEvent(QKeyEvent * event)
 {
 }
 
-void Openglwidget::compile_shader()
+QList<QString> Openglwidget::compile_shader()
 {
+	QList<QString> errors;
+
 	// build and compile our shader program
 	// ------------------------------------
 	// vertex shader
 	int vertexShader = glCreateShader(GL_VERTEX_SHADER);
-
 
 	glShaderSource(vertexShader, 1, &vs_shader, NULL);
 	glCompileShader(vertexShader);
@@ -129,8 +130,9 @@ void Openglwidget::compile_shader()
 	if (!success)
 	{
 		glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-		//std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
 	}
+
+	// here we interested in errors
 	// fragment shader
 	int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(fragmentShader, 1, &ps_shader, NULL);
@@ -141,6 +143,7 @@ void Openglwidget::compile_shader()
 	{
 		glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
 		//std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
+		errors.append(infoLog);
 	}
 	// link shaders
 	shaderProgram = glCreateProgram();
@@ -152,7 +155,10 @@ void Openglwidget::compile_shader()
 	if (!success) {
 		glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
 		//std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
+		errors.append(infoLog);
 	}
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
+
+	return errors;
 }

@@ -9,7 +9,7 @@ public:
 
 	~Openglwidget();
 
-	void compile_shader();
+	QList<QString> compile_shader();
 	const char* ps_shader;
 
 protected:
