@@ -35,6 +35,8 @@ private:
 
 	void initMenuBar();
 
+	void initToolBar();
+
 	void createWidgets();
 
 	void createDockWidgets();
@@ -59,4 +61,16 @@ private:
 	QVector<QPair<QString, QCompleter*>> m_completers;
 	QVector<QPair<QString, StyleSyntaxHighlighter*>> m_highlighters;
 	QVector<QPair<QString, SyntaxStyle*>> m_styles;
+
+	QMenu* fileMenu;
+	QMenu* helpMenu;
+
+	QAction* newAct;
+	QAction* openAct;
+	QAction* saveAct;
+	QAction* saveasAct;
+	QAction* exitaction;
+	QAction* aboutAct;
+
+	QToolBar* toolbar;
 };
