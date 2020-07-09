@@ -38,4 +38,8 @@ private:
 	float deltaTime = 0.0f;
 	float lastFrame = 0.0f;
 	QElapsedTimer timer;
+
+	// mouse 
+	int pos_x;
+	int pos_y;
 };

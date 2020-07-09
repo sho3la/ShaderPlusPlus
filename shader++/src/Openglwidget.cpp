@@ -1,5 +1,6 @@
 #include "Openglwidget.h"
 #include <QMessageBox>
+#include <QMouseEvent>
 
 Openglwidget::Openglwidget(QWidget * parent)
 	: QOpenGLWidget(parent)
@@ -89,6 +90,12 @@ void Openglwidget::paintGL()
 	// send time if needed
 	glUniform1f(glGetUniformLocation(shaderProgram, "time"), currentFrame / 1000.0f);
 
+	// send Resolution if needed
+	glUniform2f(glGetUniformLocation(shaderProgram, "Resolution"), this->geometry().width(), this->geometry().height());
+
+	// send mouse position if needed
+	glUniform2f(glGetUniformLocation(shaderProgram, "Mouse"), pos_x, pos_y);
+
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
@@ -109,6 +116,8 @@ void Openglwidget::mouseReleaseEvent(QMouseEvent * event)
 
 void Openglwidget::mouseMoveEvent(QMouseEvent * event)
 {
+	pos_x = event->pos().x();
+	pos_y = event->pos().y();
 }
 
 void Openglwidget::wheelEvent(QWheelEvent * event)
