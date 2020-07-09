@@ -69,15 +69,26 @@ void Openglwidget::initializeGL()
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
+
+	// timer
+	timer.start();
 }
 
 void Openglwidget::paintGL()
 {
+	// per-frame time
+	float currentFrame = timer.elapsed();
+	deltaTime = (currentFrame - lastFrame) / 1000.0f;
+	lastFrame = currentFrame;
+
 	glClear(GL_COLOR_BUFFER_BIT);
 	glClearColor(0.5, 0.5, 0.5, 1);
 
 
 	glUseProgram(shaderProgram);
+	// send time if needed
+	glUniform1f(glGetUniformLocation(shaderProgram, "time"), currentFrame / 1000.0f);
+
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 

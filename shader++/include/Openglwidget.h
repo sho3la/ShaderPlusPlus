@@ -1,6 +1,7 @@
 #pragma once
 #include <glew.h>
 #include <QOpenGLWidget>
+#include <QElapsedTimer>
 
 class Openglwidget : public QOpenGLWidget
 {
@@ -31,4 +32,10 @@ private:
 	const char* vs_shader;
 	int shaderProgram;
 	unsigned int VBO, VAO, EBO;
+
+
+	// timing
+	float deltaTime = 0.0f;
+	float lastFrame = 0.0f;
+	QElapsedTimer timer;
 };
