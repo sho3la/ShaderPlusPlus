@@ -12,5 +12,7 @@
     <file>languages/glsl.xml</file>
     <file>code_samples/shader_00.glsl</file>
     <file>code_samples/shader_01.glsl</file>
+    <file>code_samples/shader_02.glsl</file>
+    <file>code_samples/shader_03.glsl</file>
   </qresource>
 </RCC>
