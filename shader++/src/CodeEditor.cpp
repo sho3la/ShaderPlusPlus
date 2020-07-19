@@ -46,7 +46,7 @@ CodeEditor::~CodeEditor()
 
 void CodeEditor::initDocumentLayoutHandlers()
 {
-	//document()->documentLayout()->registerHandler(QFramedTextAttribute::type(),m_framedAttribute);
+
 }
 
 void CodeEditor::initFont()
