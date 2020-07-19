@@ -93,6 +93,8 @@ private:
 
 	void highlightParenthesis(QList<QTextEdit::ExtraSelection>& extraSelection);
 
+	bool highlightFunctionBlock(QList<QTextEdit::ExtraSelection>& extraSelection);
+
 	int getIndentationSpaces();
 
 	StyleSyntaxHighlighter* m_highlighter;

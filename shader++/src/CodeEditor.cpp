@@ -293,7 +293,9 @@ void CodeEditor::updateExtraSelection()
 {
 	QList<QTextEdit::ExtraSelection> extra;
 
-	highlightCurrentLine(extra);
+	if(!highlightFunctionBlock(extra))
+		highlightCurrentLine(extra);
+
 	highlightParenthesis(extra);
 
 	setExtraSelections(extra);
@@ -396,6 +398,97 @@ void CodeEditor::highlightParenthesis(QList<QTextEdit::ExtraSelection>& extraSel
 	}
 }
 
+bool CodeEditor::highlightFunctionBlock(QList<QTextEdit::ExtraSelection>& extraSelection)
+{
+	auto currentSymbol = charUnderCursor();
+	auto prevSymbol = charUnderCursor(-1);
+
+	auto StartLineNumber = textCursor().blockNumber();
+	int position = 0;
+
+	for (auto& pair : parentheses)
+	{
+		int direction;
+
+		QChar counterSymbol;
+		QChar activeSymbol;
+		position = textCursor().position();
+
+		if (pair.first == currentSymbol)
+		{
+			direction = 1;
+			counterSymbol = pair.second[0];
+			activeSymbol = currentSymbol;
+		}
+		else if (pair.second == prevSymbol)
+		{
+			direction = -1;
+			counterSymbol = pair.first[0];
+			activeSymbol = prevSymbol;
+			position--;
+		}
+		else
+		{
+			continue;
+		}
+
+		auto counter = 1;
+
+		while (counter != 0 &&
+			position > 0 &&
+			position < (document()->characterCount() - 1))
+		{
+			// Moving position
+			position += direction;
+
+			auto character = document()->characterAt(position);
+			// Checking symbol under position
+			if (character == activeSymbol)
+			{
+				++counter;
+			}
+			else if (character == counterSymbol)
+			{
+				--counter;
+			}
+		}
+
+		auto format = m_syntaxStyle->getFormat("Parentheses");
+		auto EndLineNumber = document()->findBlock(position).blockNumber();
+
+		// Found
+		if (counter == 0)
+		{
+			auto cursor = textCursor();
+
+			auto n = cursor.blockNumber();
+
+			while (n+1 < EndLineNumber)
+			{
+				cursor.select(QTextCursor::SelectionType::WordUnderCursor);
+				cursor.movePosition(QTextCursor::MoveOperation::NextBlock);
+				n = cursor.blockNumber();
+
+				QTextEdit::ExtraSelection selection{};
+
+				selection.format = m_syntaxStyle->getFormat("CurrentLine");
+				selection.format.setForeground(QBrush());
+				selection.format.setProperty(QTextFormat::FullWidthSelection, true);
+				selection.cursor = cursor;
+				selection.cursor.clearSelection();
+
+				extraSelection.append(selection);
+			}
+
+			return true;
+		}
+
+		break;
+	}
+
+	return false;
+}
+
 void CodeEditor::highlightCurrentLine(QList<QTextEdit::ExtraSelection>& extraSelection)
 {
 	if (!isReadOnly())
@@ -431,7 +524,7 @@ int CodeEditor::getFirstVisibleBlock()
 	for (int i = 0; i < document()->blockCount(); ++i)
 	{
 		QTextBlock block = curs.block();
-
+		
 		QRect r1 = viewport()->geometry();
 		QRect r2 = document()
 			->documentLayout()
