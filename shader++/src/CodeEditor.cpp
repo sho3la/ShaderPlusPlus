@@ -47,6 +47,10 @@ CodeEditor::~CodeEditor()
 void CodeEditor::initDocumentLayout()
 {
 	setLineWrapMode(LineWrapMode::NoWrap);
+
+	// shortcuts
+	fontZoomIN = new QShortcut(QKeySequence::ZoomIn, this);
+	fontZoomOUT = new QShortcut(QKeySequence::ZoomOut, this);
 }
 
 void CodeEditor::initFont()
@@ -85,6 +89,20 @@ void CodeEditor::performConnections()
 		&QTextEdit::selectionChanged,
 		this,
 		&CodeEditor::onSelectionChanged
+	);
+
+	connect(
+		fontZoomIN,
+		&QShortcut::activated,
+		this,
+		&CodeEditor::onFontZoomIn
+	);
+
+	connect(
+		fontZoomOUT,
+		&QShortcut::activated,
+		this,
+		&CodeEditor::onFontZoomOut
 	);
 }
 
@@ -228,6 +246,16 @@ void CodeEditor::onSelectionChanged()
 
 		setTextCursor(backup);
 	}
+}
+
+void CodeEditor::onFontZoomIn()
+{
+	zoomIn();
+}
+
+void CodeEditor::onFontZoomOut()
+{
+	zoomOut();
 }
 
 void CodeEditor::handleSelectionQuery(QTextCursor cursor)

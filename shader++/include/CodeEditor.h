@@ -58,6 +58,10 @@ public Q_SLOTS:
 
 	void onSelectionChanged();
 
+	void onFontZoomIn();
+
+	void onFontZoomOut();
+
 protected:
 	void insertFromMimeData(const QMimeData* source) override;
 
@@ -106,4 +110,8 @@ private:
 	bool m_autoParentheses;
 	bool m_replaceTab;
 	QString m_tabReplace;
+
+	// shortcuts
+	QShortcut *fontZoomIN;
+	QShortcut *fontZoomOUT;
 };
