@@ -71,7 +71,7 @@ protected:
 
 private:
 
-	void initDocumentLayoutHandlers();
+	void initDocumentLayout();
 
 	void initFont();
 

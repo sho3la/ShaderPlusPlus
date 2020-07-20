@@ -33,7 +33,7 @@ CodeEditor::CodeEditor(QWidget* widget) : QTextEdit(widget),
 	m_replaceTab(true),
 	m_tabReplace(QString(4, ' '))
 {
-	initDocumentLayoutHandlers();
+	initDocumentLayout();
 	initFont();
 	performConnections();
 
@@ -44,9 +44,9 @@ CodeEditor::~CodeEditor()
 {
 }
 
-void CodeEditor::initDocumentLayoutHandlers()
+void CodeEditor::initDocumentLayout()
 {
-
+	setLineWrapMode(LineWrapMode::NoWrap);
 }
 
 void CodeEditor::initFont()
