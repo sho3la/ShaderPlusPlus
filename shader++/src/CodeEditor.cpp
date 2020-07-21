@@ -246,6 +246,13 @@ void CodeEditor::onFontZoomOut()
 
 void CodeEditor::onShowFinder()
 {
+	m_finder->move(
+		pos().x() + geometry().width() / 2,
+		pos().y() + geometry().width() / 2);
+
+	m_finder->setKeyWord(wordUnderCursor());
+	m_finder->setCodeEditor(this);
+
 	m_finder->show();
 }
 
@@ -838,6 +845,22 @@ void CodeEditor::insertCompletion(QString s)
 QCompleter *CodeEditor::completer() const
 {
 	return m_completer;
+}
+
+void CodeEditor::moveCursorToNextWord()
+{
+	auto searchIterator = textCursor();
+	searchIterator = document()->find(m_finder->getKeyWord(), searchIterator);
+
+	auto lin_num = searchIterator.blockNumber();
+
+	if (lin_num == 0)
+	{
+		searchIterator.movePosition(QTextCursor::Start);
+		searchIterator = document()->find(m_finder->getKeyWord(), searchIterator);
+	}
+
+	setTextCursor(searchIterator);
 }
 
 QChar CodeEditor::charUnderCursor(int offset) const

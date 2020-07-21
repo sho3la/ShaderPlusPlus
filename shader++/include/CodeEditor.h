@@ -42,6 +42,8 @@ public:
 
 	QCompleter* completer() const;
 
+	void moveCursorToNextWord();
+
 public Q_SLOTS:
 
 	void insertCompletion(QString s);

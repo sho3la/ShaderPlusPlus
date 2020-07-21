@@ -1,4 +1,5 @@
 #include "FindWidget.h"
+#include "CodeEditor.h"
 
 #include <QtWidgets>
 
@@ -32,9 +33,41 @@ FindWidget::FindWidget(QWidget  *parent) : QDialog(parent)
 	setLayout(mainLayout);
 
 	setWindowTitle(tr("Find"));
+
+	performConnections();
 }
 
 FindWidget::~FindWidget()
 {
 
+}
+
+QString FindWidget::getKeyWord()
+{
+	return lineEdit->text();
+}
+
+void FindWidget::setKeyWord(QString word)
+{
+	lineEdit->setText(word);
+}
+
+void FindWidget::setCodeEditor(CodeEditor * ptr)
+{
+	codeeditor = ptr;
+}
+
+void FindWidget::find()
+{
+	codeeditor->moveCursorToNextWord();
+}
+
+void FindWidget::performConnections()
+{
+	connect(
+		findButton,
+		&QPushButton::clicked,
+		this,
+		&FindWidget::find
+	);
 }

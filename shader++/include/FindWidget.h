@@ -7,6 +7,7 @@ class QGroupBox;
 class QLabel;
 class QLineEdit;
 class QPushButton;
+class CodeEditor;
 
 class FindWidget : public QDialog
 {
@@ -17,16 +18,20 @@ public:
 
 	~FindWidget();
 
+	QString getKeyWord();
+	void setKeyWord(QString word);
+	void setCodeEditor(CodeEditor* ptr);
+
+public Q_SLOTS:
+	void find();
+
 private:
+
+	void performConnections();
+
 	QLabel *label;
 	QLineEdit *lineEdit;
-	QCheckBox *caseCheckBox;
-	QCheckBox *fromStartCheckBox;
-	QCheckBox *wholeWordsCheckBox;
-	QCheckBox *searchSelectionCheckBox;
-	QCheckBox *backwardCheckBox;
 	QDialogButtonBox *buttonBox;
 	QPushButton *findButton;
-	QPushButton *moreButton;
-	QWidget *extension;
+	CodeEditor* codeeditor;
 };
