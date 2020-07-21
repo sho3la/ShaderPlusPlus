@@ -46,7 +46,8 @@ void MainWindow::initData()
 		{"sample 1", loadCode(":/code_samples/shader_00.glsl")},
 		{"sample 2", loadCode(":/code_samples/shader_01.glsl")},
 		{"sample 3", loadCode(":/code_samples/shader_02.glsl")},
-		{"sample 4", loadCode(":/code_samples/shader_03.glsl")}
+		{"sample 4", loadCode(":/code_samples/shader_03.glsl")},
+		{"sample 5", loadCode(":/code_samples/shader_04.glsl")}
 	};
 
 	m_completers = {
