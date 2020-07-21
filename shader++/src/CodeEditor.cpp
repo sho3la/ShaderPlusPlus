@@ -2,6 +2,7 @@
 #include "SyntaxStyle.h"
 #include "CodeEditor.h"
 #include "StyleSyntaxHighlighter.h"
+#include "FindWidget.h"
 
 #include <QTextBlock>
 #include <QPaintEvent>
@@ -46,11 +47,15 @@ CodeEditor::~CodeEditor()
 
 void CodeEditor::initDocumentLayout()
 {
+	// word finder
+	m_finder = new FindWidget(this);
+
 	setLineWrapMode(LineWrapMode::NoWrap);
 
 	// shortcuts
 	fontZoomIN = new QShortcut(QKeySequence::ZoomIn, this);
 	fontZoomOUT = new QShortcut(QKeySequence::ZoomOut, this);
+	findWord = new QShortcut(QKeySequence::Find, this);
 }
 
 void CodeEditor::initFont()
@@ -104,32 +109,13 @@ void CodeEditor::performConnections()
 		this,
 		&CodeEditor::onFontZoomOut
 	);
-}
 
-QList<int> CodeEditor::getFunctionBlocks()
-{
-	QList<int> arr;
-
-	QTextCursor curs = QTextCursor(document());
-	curs.movePosition(QTextCursor::Start);
-
-	for (int i = 0; i < document()->blockCount(); ++i)
-	{
-		QTextBlock block = curs.block();
-
-		if (block.text().contains("{"))
-		{
-			arr.append(i);
-		}
-		else if (block.text().contains("}"))
-		{
-			arr.append(i);
-		}
-
-		curs.movePosition(QTextCursor::NextBlock);
-	}
-
-	return arr;
+	connect(
+		findWord,
+		&QShortcut::activated,
+		this,
+		&CodeEditor::onShowFinder
+	);
 }
 
 void CodeEditor::setHighlighter(StyleSyntaxHighlighter* highlighter)
@@ -256,6 +242,11 @@ void CodeEditor::onFontZoomIn()
 void CodeEditor::onFontZoomOut()
 {
 	zoomOut();
+}
+
+void CodeEditor::onShowFinder()
+{
+	m_finder->show();
 }
 
 void CodeEditor::handleSelectionQuery(QTextCursor cursor)

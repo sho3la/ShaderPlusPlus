@@ -5,7 +5,7 @@ class QCompleter;
 class LineNumberArea;
 class SyntaxStyle;
 class StyleSyntaxHighlighter;
-class FramedTextAttribute;
+class FindWidget;
 
 class CodeEditor : public QTextEdit
 {
@@ -17,8 +17,6 @@ public:
 	~CodeEditor();
 
 	int getFirstVisibleBlock();
-
-	QList<int> getFunctionBlocks();
 
 	void setHighlighter(StyleSyntaxHighlighter* highlighter);
 
@@ -61,6 +59,8 @@ public Q_SLOTS:
 	void onFontZoomIn();
 
 	void onFontZoomOut();
+
+	void onShowFinder();
 
 protected:
 	void insertFromMimeData(const QMimeData* source) override;
@@ -105,6 +105,7 @@ private:
 	SyntaxStyle* m_syntaxStyle;
 	LineNumberArea* m_lineNumberArea;
 	QCompleter* m_completer;
+	FindWidget* m_finder;
 
 	bool m_autoIndentation;
 	bool m_autoParentheses;
@@ -114,4 +115,5 @@ private:
 	// shortcuts
 	QShortcut *fontZoomIN;
 	QShortcut *fontZoomOUT;
+	QShortcut *findWord;
 };

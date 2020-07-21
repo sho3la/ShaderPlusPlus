@@ -15,6 +15,7 @@ find_package(Qt5Gui     CONFIG REQUIRED)
 set(HEADER_FILES
 	include/MainWindow.h
 	include/Openglwidget.h
+	include/FindWidget.h
 	include/SyntaxStyle.h
 	include/StyleSyntaxHighlighter.h
 	include/Language.h
@@ -31,6 +32,7 @@ set(SOURCE_FILES
 	src/main.cpp
 	src/MainWindow.cpp
 	src/Openglwidget.cpp
+	src/FindWidget.cpp
 	src/SyntaxStyle.cpp
 	src/StyleSyntaxHighlighter.cpp
 	src/Language.cpp
