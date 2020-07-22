@@ -16,6 +16,7 @@ class SyntaxStyle;
 class StyleSyntaxHighlighter;
 class CodeEditor;
 class Openglwidget;
+class TexturesList;
 
 class MainWindow : public QMainWindow
 {
@@ -56,6 +57,7 @@ private:
 
 	QDockWidget *m_dockedRenderWindow;
 	QDockWidget *m_dockedErrorWindow;
+	TexturesList* m_dockedTexListWindow;
 
 	CodeEditor* m_codeEditor;
 	Openglwidget* m_renderArea;

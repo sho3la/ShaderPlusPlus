@@ -4,6 +4,7 @@
 #include "SyntaxStyle.h"
 #include "GLSLHighlighter.h"
 #include "Openglwidget.h"
+#include "TexturesList.h"
 
 #include <QComboBox>
 #include <QVBoxLayout>
@@ -103,6 +104,7 @@ void MainWindow::initMenuBar()
 void MainWindow::initToolBar()
 {
 	toolbar = new QToolBar();
+	toolbar->setMovable(false);
 	toolbar->addAction(newAct);
 	toolbar->addAction(openAct);
 	toolbar->addAction(saveAct);
@@ -172,20 +174,29 @@ void MainWindow::createWidgets()
 
 void MainWindow::createDockWidgets()
 {
+	// render window
 	m_dockedRenderWindow = new QDockWidget("Render",this);
 	m_dockedRenderWindow->setFeatures(QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetMovable);
-
 	m_renderArea = new Openglwidget(m_dockedRenderWindow);
-
 	m_dockedRenderWindow->setWidget(m_renderArea);
 	addDockWidget(Qt::RightDockWidgetArea, m_dockedRenderWindow);
 
-
+	// error window
 	m_dockedErrorWindow = new QDockWidget("Errors", this);
 	m_dockedErrorWindow->setFeatures(QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetMovable);
 	m_errorsList = new QListWidget();
 	m_dockedErrorWindow->setWidget(m_errorsList);
 	addDockWidget(Qt::RightDockWidgetArea, m_dockedErrorWindow);
+
+	// texture list window
+	m_dockedTexListWindow = new TexturesList("Textures",this);
+	m_dockedTexListWindow->setFeatures(
+		QDockWidget::DockWidgetClosable |
+		QDockWidget::DockWidgetFloatable |
+		QDockWidget::DockWidgetMovable);
+	addDockWidget(Qt::RightDockWidgetArea, m_dockedTexListWindow);
+
+	tabifyDockWidget(m_dockedTexListWindow, m_dockedErrorWindow);
 }
 
 void MainWindow::setupWidgets()

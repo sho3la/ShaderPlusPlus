@@ -25,6 +25,7 @@ set(HEADER_FILES
 	include/GLSLCompleter.h
 	include/LineNumberArea.h
 	include/CodeEditor.h
+	include/TexturesList.h
 )
 
 # list the source files
@@ -40,6 +41,7 @@ set(SOURCE_FILES
 	src/GLSLCompleter.cpp
 	src/LineNumberArea.cpp
 	src/CodeEditor.cpp
+	src/TexturesList.cpp
 )
 
 set(RESOURCES_FILE
