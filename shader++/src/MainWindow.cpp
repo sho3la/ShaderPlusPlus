@@ -82,11 +82,6 @@ void MainWindow::initMenuBar()
 	saveAct->setStatusTip(tr("Save the document to disk"));
 	fileMenu->addAction(saveAct);
 
-	saveasAct = new QAction(QIcon(QPixmap(":/icons/save_as.png")), tr("&SaveAs"), this);
-	saveasAct->setShortcut(tr("Ctrl+Shift+S"));
-	saveasAct->setStatusTip(tr("Save the document to disk"));
-	fileMenu->addAction(saveasAct);
-
 	fileMenu->addSeparator();
 
 	exitaction = new QAction(QIcon(QPixmap(":/icons/exit.png")), tr("&Exit"), this);
@@ -107,7 +102,6 @@ void MainWindow::initToolBar()
 	toolbar->addAction(newAct);
 	toolbar->addAction(openAct);
 	toolbar->addAction(saveAct);
-	toolbar->addAction(saveasAct);
 
 	toolbar->addSeparator();
 

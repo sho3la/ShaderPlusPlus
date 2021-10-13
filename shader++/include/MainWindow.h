@@ -74,7 +74,6 @@ private:
 	QAction* newAct;
 	QAction* openAct;
 	QAction* saveAct;
-	QAction* saveasAct;
 	QAction* exitaction;
 	QAction* aboutAct;
 
