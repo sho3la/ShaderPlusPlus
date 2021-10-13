@@ -53,6 +53,12 @@ private:
 
 	void performConnections();
 
+	void saveFile();
+
+	void openFile();
+
+	void newFile();
+
 	QVBoxLayout* m_setupLayout;
 
 	QDockWidget *m_dockedRenderWindow;
@@ -80,4 +86,6 @@ private:
 	QToolBar* toolbar;
 	QComboBox* m_examplesList;
 	QListWidget* m_errorsList;
+
+	QString m_filename;
 };

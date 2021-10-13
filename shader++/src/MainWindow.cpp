@@ -17,6 +17,11 @@
 #include <QToolBar>
 #include <QComboBox>
 #include <QListWidget>
+#include <QTextStream>
+#include <QGuiApplication>
+#include <QSaveFile>
+#include <QFileDialog>
+#include <QMessageBox>
 
 MainWindow::MainWindow(QWidget* parent) :
 	QMainWindow(parent),
@@ -184,14 +189,16 @@ void MainWindow::createDockWidgets()
 
 void MainWindow::setupWidgets()
 {
-	setWindowTitle("Shader++");
-	setWindowIcon(QIcon(":/icons/icon.png"));
-
 	// CodeEditor
 	m_codeEditor->setPlainText(m_codeSamples[0].second);
 	m_codeEditor->setSyntaxStyle(m_styles[0].second);
 	m_codeEditor->setCompleter(m_completers[0].second);
 	m_codeEditor->setHighlighter(m_highlighters[0].second);
+
+	m_filename = m_codeSamples[0].first;
+	setWindowTitle(m_filename + " - Shader++");
+
+	setWindowIcon(QIcon(":/icons/icon.png"));
 }
 
 void MainWindow::textchanged()
@@ -217,6 +224,9 @@ void MainWindow::render_window_floating(bool topLevel)
 
 void MainWindow::selected_example_changed(int index)
 {
+	m_filename = m_codeSamples[index].first;
+	setWindowTitle(m_filename + " - Shader++");
+
 	m_codeEditor->setPlainText(m_codeSamples[index].second);
 	textchanged();
 	update();
@@ -224,7 +234,76 @@ void MainWindow::selected_example_changed(int index)
 
 void MainWindow::performConnections()
 {
+	// menu actions
+	connect(newAct, &QAction::triggered, this, &MainWindow::newFile);
+	connect(saveAct, &QAction::triggered, this, &MainWindow::saveFile);
+	connect(openAct, &QAction::triggered, this, &MainWindow::openFile);
+
+	// code editor
 	connect(m_codeEditor, &CodeEditor::textChanged, this, &MainWindow::textchanged);
 	connect(m_dockedRenderWindow, &QDockWidget::topLevelChanged, this, &MainWindow::render_window_floating);
 	connect(m_examplesList, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &MainWindow::selected_example_changed);
+}
+
+void MainWindow::saveFile()
+{
+	QFileDialog dialog(this);
+
+	dialog.setWindowModality(Qt::WindowModal);
+	dialog.setAcceptMode(QFileDialog::AcceptSave);
+
+	if (dialog.exec() != QDialog::Accepted)
+	{
+		return;
+	}
+	else
+	{
+		m_filename = dialog.selectedFiles().first();
+
+		// save
+
+		QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+
+		QSaveFile file(m_filename);
+
+		if (file.open(QFile::WriteOnly | QFile::Text))
+		{
+			QTextStream out(&file);
+			out << m_codeEditor->document()->toPlainText();
+
+			if (!file.commit())
+			{
+				QMessageBox::warning(this, "warning", "error in saving file");
+			}
+
+		}
+		else
+		{
+			QMessageBox::warning(this, "warning", "error in open file");
+		}
+
+		QGuiApplication::restoreOverrideCursor();
+
+		m_codeEditor->document()->setModified(false);
+
+		setWindowModified(false);
+
+		QString showname = m_filename;
+
+		if (m_filename.isEmpty())
+			showname = "untitled.glsl";
+
+		setWindowFilePath(showname);
+		setWindowTitle(showname + " - Shader++");
+	}
+}
+
+void MainWindow::newFile()
+{
+	m_codeEditor->clear();
+}
+
+void MainWindow::openFile()
+{
+
 }
