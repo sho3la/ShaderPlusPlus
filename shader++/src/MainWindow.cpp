@@ -4,7 +4,6 @@
 #include "SyntaxStyle.h"
 #include "GLSLHighlighter.h"
 #include "Openglwidget.h"
-#include "TexturesList.h"
 
 #include <QComboBox>
 #include <QVBoxLayout>
@@ -187,16 +186,6 @@ void MainWindow::createDockWidgets()
 	m_errorsList = new QListWidget();
 	m_dockedErrorWindow->setWidget(m_errorsList);
 	addDockWidget(Qt::RightDockWidgetArea, m_dockedErrorWindow);
-
-	// texture list window
-	m_dockedTexListWindow = new TexturesList("Textures",this);
-	m_dockedTexListWindow->setFeatures(
-		QDockWidget::DockWidgetClosable |
-		QDockWidget::DockWidgetFloatable |
-		QDockWidget::DockWidgetMovable);
-	addDockWidget(Qt::RightDockWidgetArea, m_dockedTexListWindow);
-
-	tabifyDockWidget(m_dockedTexListWindow, m_dockedErrorWindow);
 }
 
 void MainWindow::setupWidgets()
