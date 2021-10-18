@@ -22,6 +22,7 @@
 #include <QSaveFile>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QStatusBar>
 
 MainWindow::MainWindow(QWidget* parent) :
 	QMainWindow(parent),
@@ -122,6 +123,11 @@ void MainWindow::initToolBar()
 	addToolBar(toolbar);
 }
 
+void MainWindow::init_statusBar()
+{
+	statusBar()->addPermanentWidget(new QLabel(""));
+}
+
 QString MainWindow::loadCode(QString path)
 {
 	QFile fl(path);
@@ -189,20 +195,23 @@ void MainWindow::createDockWidgets()
 
 void MainWindow::setupWidgets()
 {
+	setWindowIcon(QIcon(":/icons/icon.png"));
+
 	// CodeEditor
 	m_codeEditor->setPlainText(m_codeSamples[0].second);
 	m_codeEditor->setSyntaxStyle(m_styles[0].second);
 	m_codeEditor->setCompleter(m_completers[0].second);
 	m_codeEditor->setHighlighter(m_highlighters[0].second);
 
-	m_filename = m_codeSamples[0].first;
-	setWindowTitle(m_filename + " - Shader++");
-
-	setWindowIcon(QIcon(":/icons/icon.png"));
+	setCurrentFile(QString());
 }
 
 void MainWindow::textchanged()
 {
+	// mark code as modified
+	setWindowModified(m_codeEditor->document()->isModified());
+
+	// compile new code edited
 	auto code = m_codeEditor->toPlainText().toStdString();
 	m_renderArea->ps_shader = code.c_str();
 	auto result = m_renderArea->compile_shader();
@@ -224,9 +233,6 @@ void MainWindow::render_window_floating(bool topLevel)
 
 void MainWindow::selected_example_changed(int index)
 {
-	m_filename = m_codeSamples[index].first;
-	setWindowTitle(m_filename + " - Shader++");
-
 	m_codeEditor->setPlainText(m_codeSamples[index].second);
 	textchanged();
 	update();
@@ -245,23 +251,54 @@ void MainWindow::performConnections()
 	connect(m_examplesList, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &MainWindow::selected_example_changed);
 }
 
+void MainWindow::setCurrentFile(QString filename)
+{
+	m_filename = filename;
+	m_codeEditor->document()->setModified(false);
+
+	setWindowModified(false);
+
+	QString showname = m_filename + " - Shader++";
+
+	if (m_filename.isEmpty())
+		showname = "untitled.glsl - Shader++";
+
+	setWindowFilePath(showname);
+}
+
+bool MainWindow::maybesave()
+{
+	if (!m_codeEditor->document()->isModified())
+		return true;
+
+	auto ret = QMessageBox::warning(this, "Warning", "the document is modified \n do you want to save ? ",
+		QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+
+	switch (ret)
+	{
+	case QMessageBox::Save:
+		saveFile();
+		break;
+	case QMessageBox::Cancel:
+		return false;
+		break;
+	case QMessageBox::Discard:
+		break;
+	default:
+		break;
+	}
+
+	return true;
+}
+
 void MainWindow::saveFile()
 {
-	QFileDialog dialog(this);
-
-	dialog.setWindowModality(Qt::WindowModal);
-	dialog.setAcceptMode(QFileDialog::AcceptSave);
-
-	if (dialog.exec() != QDialog::Accepted)
+	if (m_filename.isEmpty())
 	{
-		return;
+		saveAsFile();
 	}
 	else
 	{
-		m_filename = dialog.selectedFiles().first();
-
-		// save
-
 		QGuiApplication::setOverrideCursor(Qt::WaitCursor);
 
 		QSaveFile file(m_filename);
@@ -283,27 +320,61 @@ void MainWindow::saveFile()
 		}
 
 		QGuiApplication::restoreOverrideCursor();
+		setCurrentFile(m_filename);
+		statusBar()->showMessage("file saved", 2000);
+	}
+}
 
-		m_codeEditor->document()->setModified(false);
+void MainWindow::saveAsFile()
+{
+	QFileDialog dialog(this);
 
-		setWindowModified(false);
+	dialog.setWindowModality(Qt::WindowModal);
+	dialog.setAcceptMode(QFileDialog::AcceptSave);
 
-		QString showname = m_filename;
-
-		if (m_filename.isEmpty())
-			showname = "untitled.glsl";
-
-		setWindowFilePath(showname);
-		setWindowTitle(showname + " - Shader++");
+	if (dialog.exec() != QDialog::Accepted)
+	{
+		// erorr
+	}
+	else
+	{
+		m_filename = dialog.selectedFiles().first();
+		setCurrentFile(m_filename);
+		saveFile();
 	}
 }
 
 void MainWindow::newFile()
 {
-	m_codeEditor->clear();
+	if (maybesave())
+	{
+		m_codeEditor->clear();
+		setCurrentFile(QString());
+	}
 }
 
 void MainWindow::openFile()
 {
+	if (maybesave())
+	{
+		m_filename = QFileDialog::getOpenFileName(this);
 
+		if (!m_filename.isEmpty())
+		{
+			QFile file(m_filename);
+
+			if (!file.open(QFile::ReadOnly | QFile::Text))
+			{
+				QMessageBox::warning(this, "Warning", "erorr loading file");
+			}
+
+			QTextStream in(&file);
+
+			QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+			m_codeEditor->document()->setPlainText(in.readAll());
+			QGuiApplication::restoreOverrideCursor();
+
+			setCurrentFile(m_filename);
+		}
+	}
 }

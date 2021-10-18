@@ -39,6 +39,8 @@ private:
 
 	void initToolBar();
 
+	void init_statusBar();
+
 	void createWidgets();
 
 	void createDockWidgets();
@@ -53,7 +55,13 @@ private:
 
 	void performConnections();
 
+	void setCurrentFile(QString filename);
+
+	bool maybesave();
+
 	void saveFile();
+
+	void saveAsFile();
 
 	void openFile();
 
