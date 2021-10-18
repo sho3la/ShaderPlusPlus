@@ -4,7 +4,6 @@
 #include "SyntaxStyle.h"
 #include "GLSLHighlighter.h"
 #include "Openglwidget.h"
-#include "TexturesList.h"
 
 #include <QComboBox>
 #include <QVBoxLayout>
@@ -18,6 +17,12 @@
 #include <QToolBar>
 #include <QComboBox>
 #include <QListWidget>
+#include <QTextStream>
+#include <QGuiApplication>
+#include <QSaveFile>
+#include <QFileDialog>
+#include <QMessageBox>
+#include <QStatusBar>
 
 MainWindow::MainWindow(QWidget* parent) :
 	QMainWindow(parent),
@@ -83,11 +88,6 @@ void MainWindow::initMenuBar()
 	saveAct->setStatusTip(tr("Save the document to disk"));
 	fileMenu->addAction(saveAct);
 
-	saveasAct = new QAction(QIcon(QPixmap(":/icons/save_as.png")), tr("&SaveAs"), this);
-	saveasAct->setShortcut(tr("Ctrl+Shift+S"));
-	saveasAct->setStatusTip(tr("Save the document to disk"));
-	fileMenu->addAction(saveasAct);
-
 	fileMenu->addSeparator();
 
 	exitaction = new QAction(QIcon(QPixmap(":/icons/exit.png")), tr("&Exit"), this);
@@ -108,7 +108,6 @@ void MainWindow::initToolBar()
 	toolbar->addAction(newAct);
 	toolbar->addAction(openAct);
 	toolbar->addAction(saveAct);
-	toolbar->addAction(saveasAct);
 
 	toolbar->addSeparator();
 
@@ -122,6 +121,11 @@ void MainWindow::initToolBar()
 
 	toolbar->addWidget(m_examplesList);
 	addToolBar(toolbar);
+}
+
+void MainWindow::init_statusBar()
+{
+	statusBar()->addPermanentWidget(new QLabel(""));
 }
 
 QString MainWindow::loadCode(QString path)
@@ -187,21 +191,10 @@ void MainWindow::createDockWidgets()
 	m_errorsList = new QListWidget();
 	m_dockedErrorWindow->setWidget(m_errorsList);
 	addDockWidget(Qt::RightDockWidgetArea, m_dockedErrorWindow);
-
-	// texture list window
-	m_dockedTexListWindow = new TexturesList("Textures",this);
-	m_dockedTexListWindow->setFeatures(
-		QDockWidget::DockWidgetClosable |
-		QDockWidget::DockWidgetFloatable |
-		QDockWidget::DockWidgetMovable);
-	addDockWidget(Qt::RightDockWidgetArea, m_dockedTexListWindow);
-
-	tabifyDockWidget(m_dockedTexListWindow, m_dockedErrorWindow);
 }
 
 void MainWindow::setupWidgets()
 {
-	setWindowTitle("Shader++");
 	setWindowIcon(QIcon(":/icons/icon.png"));
 
 	// CodeEditor
@@ -209,10 +202,16 @@ void MainWindow::setupWidgets()
 	m_codeEditor->setSyntaxStyle(m_styles[0].second);
 	m_codeEditor->setCompleter(m_completers[0].second);
 	m_codeEditor->setHighlighter(m_highlighters[0].second);
+
+	setCurrentFile(QString());
 }
 
 void MainWindow::textchanged()
 {
+	// mark code as modified
+	setWindowModified(m_codeEditor->document()->isModified());
+
+	// compile new code edited
 	auto code = m_codeEditor->toPlainText().toStdString();
 	m_renderArea->ps_shader = code.c_str();
 	auto result = m_renderArea->compile_shader();
@@ -241,7 +240,141 @@ void MainWindow::selected_example_changed(int index)
 
 void MainWindow::performConnections()
 {
+	// menu actions
+	connect(newAct, &QAction::triggered, this, &MainWindow::newFile);
+	connect(saveAct, &QAction::triggered, this, &MainWindow::saveFile);
+	connect(openAct, &QAction::triggered, this, &MainWindow::openFile);
+
+	// code editor
 	connect(m_codeEditor, &CodeEditor::textChanged, this, &MainWindow::textchanged);
 	connect(m_dockedRenderWindow, &QDockWidget::topLevelChanged, this, &MainWindow::render_window_floating);
 	connect(m_examplesList, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &MainWindow::selected_example_changed);
+}
+
+void MainWindow::setCurrentFile(QString filename)
+{
+	m_filename = filename;
+	m_codeEditor->document()->setModified(false);
+
+	setWindowModified(false);
+
+	QString showname = m_filename + " - Shader++";
+
+	if (m_filename.isEmpty())
+		showname = "untitled.glsl - Shader++";
+
+	setWindowFilePath(showname);
+}
+
+bool MainWindow::maybesave()
+{
+	if (!m_codeEditor->document()->isModified())
+		return true;
+
+	auto ret = QMessageBox::warning(this, "Warning", "the document is modified \n do you want to save ? ",
+		QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+
+	switch (ret)
+	{
+	case QMessageBox::Save:
+		saveFile();
+		break;
+	case QMessageBox::Cancel:
+		return false;
+		break;
+	case QMessageBox::Discard:
+		break;
+	default:
+		break;
+	}
+
+	return true;
+}
+
+void MainWindow::saveFile()
+{
+	if (m_filename.isEmpty())
+	{
+		saveAsFile();
+	}
+	else
+	{
+		QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+
+		QSaveFile file(m_filename);
+
+		if (file.open(QFile::WriteOnly | QFile::Text))
+		{
+			QTextStream out(&file);
+			out << m_codeEditor->document()->toPlainText();
+
+			if (!file.commit())
+			{
+				QMessageBox::warning(this, "warning", "error in saving file");
+			}
+
+		}
+		else
+		{
+			QMessageBox::warning(this, "warning", "error in open file");
+		}
+
+		QGuiApplication::restoreOverrideCursor();
+		setCurrentFile(m_filename);
+		statusBar()->showMessage("file saved", 2000);
+	}
+}
+
+void MainWindow::saveAsFile()
+{
+	QFileDialog dialog(this);
+
+	dialog.setWindowModality(Qt::WindowModal);
+	dialog.setAcceptMode(QFileDialog::AcceptSave);
+
+	if (dialog.exec() != QDialog::Accepted)
+	{
+		// erorr
+	}
+	else
+	{
+		m_filename = dialog.selectedFiles().first();
+		setCurrentFile(m_filename);
+		saveFile();
+	}
+}
+
+void MainWindow::newFile()
+{
+	if (maybesave())
+	{
+		m_codeEditor->clear();
+		setCurrentFile(QString());
+	}
+}
+
+void MainWindow::openFile()
+{
+	if (maybesave())
+	{
+		m_filename = QFileDialog::getOpenFileName(this);
+
+		if (!m_filename.isEmpty())
+		{
+			QFile file(m_filename);
+
+			if (!file.open(QFile::ReadOnly | QFile::Text))
+			{
+				QMessageBox::warning(this, "Warning", "erorr loading file");
+			}
+
+			QTextStream in(&file);
+
+			QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+			m_codeEditor->document()->setPlainText(in.readAll());
+			QGuiApplication::restoreOverrideCursor();
+
+			setCurrentFile(m_filename);
+		}
+	}
 }

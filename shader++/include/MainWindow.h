@@ -39,6 +39,8 @@ private:
 
 	void initToolBar();
 
+	void init_statusBar();
+
 	void createWidgets();
 
 	void createDockWidgets();
@@ -52,6 +54,18 @@ private:
 	void selected_example_changed(int index);
 
 	void performConnections();
+
+	void setCurrentFile(QString filename);
+
+	bool maybesave();
+
+	void saveFile();
+
+	void saveAsFile();
+
+	void openFile();
+
+	void newFile();
 
 	QVBoxLayout* m_setupLayout;
 
@@ -74,11 +88,12 @@ private:
 	QAction* newAct;
 	QAction* openAct;
 	QAction* saveAct;
-	QAction* saveasAct;
 	QAction* exitaction;
 	QAction* aboutAct;
 
 	QToolBar* toolbar;
 	QComboBox* m_examplesList;
 	QListWidget* m_errorsList;
+
+	QString m_filename;
 };
